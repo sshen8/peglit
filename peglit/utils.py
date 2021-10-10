@@ -1,7 +1,6 @@
 """
 Helper functions that interface with ViennaRNA.
 """
-from math import prod
 import numpy as np
 from tqdm import tqdm
 import RNA
@@ -78,7 +77,7 @@ def sequence_space(pattern):
     """
     Number of sequences consistent with the pattern
     """
-    return prod(len(constants.BASE_SYMBOLS[nt]) for nt in pattern)
+    return np.prod([len(constants.BASE_SYMBOLS[nt]) for nt in pattern])
 
 class ProgressObserver:
     def __init__(self, num_repeats, num_steps):
