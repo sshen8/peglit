@@ -1,24 +1,19 @@
 # pegRNA Linker Identification Tool (pegLIT)
 
-pegRNA Linker Identification Tool (pegLIT) automatically identifies non-interfering nucleotide linkers between a pegRNA and 3' motif. For more about the underlying science, please check out our publication:
+pegRNA Linker Identification Tool (pegLIT) automatically identifies non-interfering nucleotide linkers between a pegRNA and 3' motif. For more about the underlying science, please check out [our publication](https://doi.org/10.1038/s41587-021-01039-7):
 
     J. Nelson, P. Randolph, S. Shen, K. Everette, P. Chen, A. Anzalone, M. An, G. Newby, J. Chen, A. Hsu, and D. Liu. Engineered pegRNAs that improve prime editing efficiency. Nature Biotechnology (2021).
 
 ## Installation
 
-There are three main ways to access and use pegLIT.
+There are two main ways to access and use pegLIT.
 
 * The **web app** is probably the easiest and is sufficiently powerful for most use cases.
-* If your pegRNAs are unusually long (say >150 nt), pegLIT might need more time than the 10-minute limit we've imposed for our server. In that case, you can install pegLIT onto your own computer via our **Docker image**, which will let you run a user interface that looks identical to the web app — no coding needed.
-* If you'd like to programatically run pegLIT as part of your own custom pipeline, you can install our **Python package**.
+* If your pegRNAs are unusually long (say >150 nt), pegLIT might need more time than the 10-minute limit we've imposed for our server. In that case, you can install pegLIT onto your computer via our **Python package**, which will let you programatically run pegLIT as part of your own custom pipeline.
 
 ### Web app
 
 No installation needed — pegLIT is ready to use online at [peglit.liugroup.us](https://peglit.liugroup.us).
-
-### Docker image
-
-Coming soon.
 
 ### Python package
 
@@ -46,14 +41,16 @@ import peglit
 linkers = peglit.pegLIT(seq_spacer="ATGC", seq_scaffold="ATGC", seq_template="ATGC",
                         seq_pbs="ATGC", seq_motif="ATGC")
 ```
+The output `linkers` is a list of recommended linker sequence(s). In this case, `['TCGACCCT']`.
 
 To calculate linker basepairing scores for an epegRNA:
 ```
 import peglit
 
 subscores = peglit.score(seq_spacer="ATGC", seq_scaffold="ATGC", seq_template="ATGC",
-                         seq_pbs="ATGC", seq_linker="ATGC", seq_motif="ATGC")
+                         seq_pbs="ATGC", seq_linker="ATGC")
 ```
+The output `subscores` is a tuple containing the PBS, spacer, template, and scaffold subscores. In this case, `(0.90, 0.51, 0.69, 0.55)`. Each subscore is between 0 and 1; higher is better (less basepairing).
 
 ## Documentation
 
