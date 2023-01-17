@@ -43,7 +43,7 @@ The input is a pegRNA sequence with commas separating the spacer, scaffold, temp
 
 You can also run a _batch_ of pegRNA sequences in a CSV file:
 ```
-peglit batch_pegRNA_sequences.csv
+peglit --batch batch_pegRNA_sequences.csv
 ```
 The first row of the CSV file should include the headers: `spacer`, `scaffold`, `template`, `PBS`, `motif`; and each subsequent row should contain the corresponding pegRNA subsequences. The output will be saved to a new CSV file: `<input_filename>_linker_designs.csv`.
 
