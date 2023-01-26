@@ -4,7 +4,7 @@ Helper functions that interface with ViennaRNA.
 import numpy as np
 from tqdm import tqdm
 import RNA
-from . import constants
+from peglit import constants
 
 def make_sequence(*sequence_components):
     """

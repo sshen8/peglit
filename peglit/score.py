@@ -2,7 +2,7 @@
 Define scoring and functions
 """
 import argparse
-from .utils import make_bpp, make_bpp_subseq
+from peglit.utils import make_bpp, make_bpp_subseq
 
 def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh, verbose=False):
     """
@@ -70,8 +70,7 @@ def apply_score(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_linker,
 def main(raw_args=None):
     parser = argparse.ArgumentParser(
         usage="%(prog)s spacer,scaffold,template,pbs linker [options]",
-        description="Scores.",
-        add_help=False)
+        description="Scores.")
     parser.add_argument("sequence", type=str)
     parser.add_argument("linker", type=str)
     parser.add_argument("--max", action="store_true")

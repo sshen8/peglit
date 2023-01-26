@@ -89,7 +89,7 @@ def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
     * Minimum number of A or C bases allowed in the outputted linker, expressed as a fraction of the length of the linker.
     * Default: 0.5
 * `u_thresh` : int, optional
-    * Maximum number of consecutive C bases allowed in the epegRNA containing the outputted linker.
+    * Maximum number of consecutive U bases allowed in the epegRNA containing the outputted linker.
     * Default: 3
 * `n_thresh` : int, optional
     * Maximum number of consecutive bases of any base allowed in the epegRNA containing the outputted linker.

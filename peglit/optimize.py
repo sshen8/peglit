@@ -4,9 +4,9 @@ Simulated annealing optimization of linkers
 import heapq
 import random
 from scipy.special import expit as sigmoid
-from .score import apply_score, apply_filters
-from . import constants
-from .utils import sequence_space
+from peglit.score import apply_score, apply_filters
+from peglit import constants
+from peglit.utils import sequence_space
 
 def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
              linker_pattern=None, ac_thresh=None, u_thresh=None, n_thresh=None, topn=None,

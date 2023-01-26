@@ -7,7 +7,7 @@ import numpy as np
 from scipy.cluster.hierarchy import ClusterWarning
 from sklearn.cluster import AgglomerativeClustering as HAC
 from Levenshtein import distance as levenshtein_distance
-from . import constants
+from peglit import constants
 
 def apply_bottleneck(heap_scores, heap, bottleneck=None, seed=None, verbose=False):
     """

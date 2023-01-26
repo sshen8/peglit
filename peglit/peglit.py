@@ -8,12 +8,12 @@ from time import sleep
 import pandas as pd
 from tqdm import tqdm
 from matplotlib import pyplot as plt
-from .utils import sequence_space, TqdmProgressObserver
-from .plots import plot_clusters
-from .optimize import optimize
-from .bottleneck import apply_bottleneck
-from .inspect import calc_info, print_input_sequence, print_filter_stats, print_structures
-from . import constants
+from peglit.utils import sequence_space, TqdmProgressObserver
+from peglit.plots import plot_clusters
+from peglit.optimize import optimize
+from peglit.bottleneck import apply_bottleneck
+from peglit.inspect import calc_info, print_input_sequence, print_filter_stats, print_structures
+from peglit import constants
 
 def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
            linker_pattern="NNNNNNNN", ac_thresh=0.5, u_thresh=3, n_thresh=3, topn=100,

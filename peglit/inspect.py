@@ -1,9 +1,9 @@
 import math
 import argparse
 import RNA
-from .utils import make_bpp, make_bpp_subseq
-from .score import apply_score
-from . import constants
+from peglit.utils import make_bpp, make_bpp_subseq
+from peglit.score import apply_score
+from peglit import constants
 
 def make_structures(linker_pos, omit_pos, *sequence_components,
                     scaffold_pos=None, scaffold_thresh=None,
@@ -151,8 +151,7 @@ def print_structures(linker_stat, verbose):
 def main(raw_args=None):
     parser = argparse.ArgumentParser(
         usage="%(prog)s spacer,scaffold,template,pbs,motif linker [options]",
-        description="Scores.",
-        add_help=False)
+        description="Scores.")
     parser.add_argument("sequence", type=str)
     parser.add_argument("linker", type=str)
     parser.add_argument("--epsilon", type=float, default=constants.DEFAULT_EPSILON)

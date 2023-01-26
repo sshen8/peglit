@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
 from sklearn.cluster import linkage_tree
-from .utils import fill_bpp
+from peglit.utils import fill_bpp
 
 def plot_bpp(seq, basepair_probs, seq_idx, seq_names=("Spacer", "Scaffold", "Template", "PBS", "Linker")):
     bpp = fill_bpp(basepair_probs)
