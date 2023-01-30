@@ -8,30 +8,28 @@ pegRNA Linker Identification Tool (pegLIT) automatically identifies non-interfer
 
 There are two main ways to access and use pegLIT.
 
-* The **web app** is probably the easiest and is sufficiently powerful for most use cases.
+* The **web app** is probably the easiest and is sufficiently powerful for most use cases. You can access it at [peglit.liugroup.us](https://peglit.liugroup.us).
 * If your pegRNAs are unusually long (say >150 nt), pegLIT might need more time than the 10-minute limit we've imposed for our server. In that case, you can install pegLIT onto your computer via our **Python package**, which will let you programatically run pegLIT as part of your own custom pipeline.
-
-### Web app
-
-No installation needed — pegLIT is ready to use online at [peglit.liugroup.us](https://peglit.liugroup.us).
 
 ### Python package
 
+To install pegLIT from [Bioconda](https://bioconda.github.io) into your current conda environment:
 ```
-pip install git+https://github.com/sshen8/peglit
-```
-
-You will also need to install [ViennaRNA](https://www.tbi.univie.ac.at/RNA/documentation.html#install), which is used by pegLIT to calculate RNA secondary structures:
-
-```
-wget -qO ViennaRNA-2.4.18.tar.gz "https://www.tbi.univie.ac.at/RNA/download/sourcecode/2_4_x/ViennaRNA-2.4.18.tar.gz"
-tar -xzvf ViennaRNA-2.4.18.tar.gz
-cd ViennaRNA-2.4.18
-./configure --without-perl --without-python --with-python3
-make && make install && make clean
+conda install peglit
 ```
 
-It's important to use the `--with-python3` flag to let pegLIT interface with ViennaRNA.
+#### Additional steps for Apple silicon
+If you're running a [Mac with Apple silicon](https://support.apple.com/en-us/HT211814), you need to do a few more things because some of pegLIT's dependencies aren't compatible with Apple silicon yet.
+1. Install [Rosetta](https://support.apple.com/en-us/HT211861) if you haven't already:
+    ```
+    softwareupdate --install-rosetta
+    ```
+2. Create and activate a conda environment that uses the Intel versions of packages:
+    ```
+    CONDA_SUBDIR=osx-64 conda create -n peglit_env
+    conda activate peglit_env
+    ```
+3. Now you can install pegLIT.
 
 ## Usage
 
