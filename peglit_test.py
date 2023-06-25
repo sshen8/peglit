@@ -134,3 +134,17 @@ def test_pegLIT(case_in, case_out):
     assert len(pegLIT_main(**case_in, verbose=True)) == 5
     assert len(set(pegLIT_min(**case_in)) & case_out) == len(case_out)
     assert len(set(pegLIT_main(**case_in, progress=TqdmProgressObserver(case_in["num_repeats"], case_in["num_steps"]))) & case_out) == len(case_out)
+
+def test_pegLIT_small_search_space():
+    # issue #3: return if screened everything
+    params = dict(
+        seq_spacer="GGCCCAGACTGAGCACGTGA",
+        seq_scaffold="GTTTTAGAGCTAGAAATAGCAAGTTAAAATAAGGCTAGTCCGTTATCAACTTGAAAAAGTGGCACCGAGTCGGTGC",
+        seq_template="TGGAGGAAGCAGGGCTTCCTTTCCTCTGCCATCACTTATCGTCGTCATCCTTGTAATC",
+        seq_pbs="CGTGCTCAGTCTG",
+        seq_motif="CGCGGTTCTATCTAGTTACGCGTTAAACCAACTAGAA",
+        linker_pattern="NN",
+        seed=2020
+    )
+    assert set(pegLIT_main(verbose=False, **params)) == {"AC"}
+    assert set(pegLIT_min(**params)) == {"AC"}

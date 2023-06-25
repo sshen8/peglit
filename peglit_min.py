@@ -107,6 +107,7 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
     # Initialize hashmap of sequences already considered
     linker_skip = {}
     len_sequence_space = prod(len(BASE_SYMBOLS[nt]) for nt in linker_pattern)
+    seen_everything = False
     # Initialize min heap of topn linkers
     linker_heap = []
     for _ in range(num_repeats):
@@ -125,11 +126,15 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
                     + random.choice(BASE_SYMBOLS[linker_pattern[char_pos]])
                     + seq_linker[(char_pos + 1):])
                 keep_going = (
-                    (seq_linker in linker_skip
+                    seq_linker in linker_skip
                     or not apply_filters(seq_pre, seq_linker, seq_post,
                                          ac_thresh, u_thresh, n_thresh))
-                    and len(linker_skip) < len_sequence_space) # already screened whole seq space
+                if len(linker_skip) >= len_sequence_space: # already screened whole seq space
+                    seen_everything = True
+                    break
                 linker_skip[seq_linker] = True
+            if seen_everything:
+                break
             # Calculate score for linker sequence
             score_to_beat = linker_heap[0][0] if len(linker_heap) >= topn else None
             score = apply_score(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_linker,
@@ -150,6 +155,8 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
                 score_prev = score
             # Update simulated annealing param
             temp *= temp_decay
+        if seen_everything:
+            break
     linker_heap_scores, linker_heap = zip(*linker_heap)
     return linker_heap_scores, linker_heap
 

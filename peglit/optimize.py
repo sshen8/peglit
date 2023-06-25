@@ -49,6 +49,7 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
     # Initialize hashmap of sequences already considered
     linker_skip = {}
     len_sequence_space = sequence_space(linker_pattern)
+    seen_everything = False
     # Initialize min heap of topn linkers
     linker_heap = []
     for _ in range(num_repeats):
@@ -67,10 +68,11 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
                     + random.choice(constants.BASE_SYMBOLS[linker_pattern[char_pos]])
                     + seq_linker[(char_pos + 1):]
                     )
-                if seq_linker in linker_skip:               # already screened it
+                if seq_linker in linker_skip: # already screened it
+                    if len(linker_skip) >= len_sequence_space: # already screened whole seq space
+                        seen_everything = True
+                        break
                     continue
-                if len(linker_skip) >= len_sequence_space:  # already screened whole seq space
-                    break
                 linker_skip[seq_linker] = True
                 filt_pass, rsn = apply_filters(seq_pre, seq_linker, seq_post,
                                                ac_thresh, u_thresh, n_thresh, verbose=True)
@@ -78,6 +80,8 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
                     break
                 else:
                     filter_stats[rsn] += 1
+            if seen_everything:
+                break
             # Calculate score for linker sequence
             score_to_beat = linker_heap[0][0] if len(linker_heap) >= topn else None
             score = apply_score(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_linker,
@@ -108,6 +112,8 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
             # Update progressbar
             if progress:
                 progress.increment_step()
+        if seen_everything:
+            break
         if progress:
             progress.increment_repeat()
     if progress:
