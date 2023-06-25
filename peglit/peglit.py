@@ -12,7 +12,7 @@ from peglit.utils import sequence_space, TqdmProgressObserver
 from peglit.plots import plot_clusters
 from peglit.optimize import optimize
 from peglit.bottleneck import apply_bottleneck
-from peglit.inspect import calc_info, print_input_sequence, print_filter_stats, print_structures
+from peglit.inspect import calc_info, print_input_sequence, print_filter_stats, print_linker
 from peglit import constants
 
 def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
@@ -173,10 +173,8 @@ def main(raw_args=None):
         if args.verbose:
             print_filter_stats(filter_stats, args.linker_pattern, args.ac_thresh, args.u_thresh, args.n_thresh, args.bottleneck, score_cutoff)
         for seq_linker, linker_stat in linker_info.items():
-            # Print recommended linker
-            print(seq_linker)
-            # Print warnings and scores and structures if requested
-            print_structures(linker_stat, verbose=args.verbose)
+            # Print recommended linker, warnings, scores, and structures if requested
+            print_linker(seq_linker, linker_stat, verbose=args.verbose)
     # Batch input read from CSV file. Output into new columns in duplicated CSV file
     elif args.batch is not None:
         # Make and validate output filename

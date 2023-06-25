@@ -128,12 +128,13 @@ def print_filter_stats(filter_stats, linker_pattern, ac_thresh, u_thresh, n_thre
         print("> " + " "*((4*i)+2) + "\u251C\u2500[{num: >{pad:}d}] {title:s}".format(title=FILTER_NAMES_PRINT[filt_name][0], num=filter_stats[filt_name], pad=pad))
         print("> " + " "*((4*i)+2) + "\u2514\u2500[{num: >{pad:}d}] {title:s}".format(title=FILTER_NAMES_PRINT[filt_name][1], num=num_remain, pad=pad))
 
-def print_structures(linker_stat, verbose):
+def print_linker(seq_linker, linker_stat, verbose):
+    print(seq_linker)
     # Print warnings about scaffold or motif interactions
     if any(struct["scaffold_intxn"] for struct in linker_stat["structures"].values()):
-        print("* Significant scaffold:pegRNA interaction predicted")
+        print("* Significant scaffold:pegRNA interaction predicted for linker above")
     if any(struct["motif_intxn"] for struct in linker_stat["structures"].values()):
-        print("+ Significant motif:pegRNA interaction predicted")
+        print("+ Significant motif:pegRNA interaction predicted for linker above")
     # Print structures and scores
     if verbose:
         fmt_scores = ("> {full_sequence:s} (score = {score:s})")
@@ -161,10 +162,8 @@ def main(raw_args=None):
     seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif = args.sequence.split(",")
     linker_stat = calc_info(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif, args.linker,
                             epsilon=args.epsilon, scaffold_thresh=args.scaffold_thresh, motif_thresh=args.motif_thresh)
-    # Print recommended linker
-    print(args.linker)
-    # Print warnings and scores and structures if requested
-    print_structures(linker_stat, verbose=True)
+    # Print recommended linker, warnings, scores, and structures if requested
+    print_linker(args.linker, linker_stat, verbose=True)
 
 if __name__ == "__main__":
     main()
