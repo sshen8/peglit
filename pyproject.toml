@@ -1,0 +1,33 @@
+[project]
+name = "peglit"
+version = "1.1.0"
+readme = "README.md"
+requires-python = ">=3.6"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Simon P Shen", email = "simonshen@fas.harvard.edu"}
+]
+maintainers = [
+  {name = "Simon P Shen", email = "simonshen@fas.harvard.edu"}
+]
+dependencies = [
+  "pandas",
+  "tqdm",
+  "matplotlib",
+  "Levenshtein",
+  "scipy",
+  "numpy",
+  "scikit-learn"
+]
+
+[project.urls]
+homepage = "https://peglit.liugroup.us"
+repository = "https://github.com/sshen8/peglit"
+
+[project.scripts]
+peglit = "peglit.peglit:main"
+"peglit.score" = "peglit.score:main"
+"peglit.inspect" = "peglit.inspect:main"
+
+[tool.setuptools]
+packages = ["peglit"]
