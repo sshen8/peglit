@@ -3,8 +3,9 @@ Define scoring and functions
 """
 import argparse
 from peglit.utils import make_bpp, make_bpp_subseq
+from collections.abc import Container
 
-def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh, verbose=False):
+def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh, verbose=False, sequences_to_avoid: Container[str] = None):
     """
     Returns False (and filter name if verbose) if any filter is failed i.e. AC content < ac_thresh
     OR consecutive Us > u_thresh OR consecutive Ns > n_thresh. Otherwise, True if all filters are
@@ -23,6 +24,10 @@ def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh, 
     seq_neighborhood = seq_neighborhood.replace("T", "U")
     if any(nt * (n_thresh + 1) in seq_neighborhood for nt in set(seq_linker)):
         return (False, "N thresh") if verbose else False
+    # Sequences to avoid
+    if sequences_to_avoid is not None:
+        if any(seq_to_avoid in seq_pre[-len(seq_to_avoid):] + seq_linker + seq_post[:len(seq_to_avoid)] for seq_to_avoid in sequences_to_avoid):
+            return (False, "Sequence to avoid") if verbose else False
     return (True, None) if verbose else True
 
 def calc_subscores(linker_pos, *sequence_components, subseq_pool=None):

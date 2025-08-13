@@ -6,6 +6,7 @@ from scipy.special import expit as sigmoid
 from sklearn.cluster import AgglomerativeClustering as HAC
 from Levenshtein import distance as levenshtein_distance
 import RNA # ViennaRNA
+from collections.abc import Container
 
 BASE_SYMBOLS = {
     "A": ("A",), "C": ("C",), "G": ("G",), "T": ("T",), "U": ("T",),
@@ -14,7 +15,7 @@ BASE_SYMBOLS = {
     "B": ("C", "G", "T"), "D": ("A", "G", "T"), "H": ("A", "C", "T"), "V": ("A", "C", "G"),
     "N": ("A", "C", "G", "T")}
 
-def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh):
+def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh, sequences_to_avoid: Container[str] = None):
     """
     Returns False if any filter is failed i.e. AC content < ac_thresh OR consecutive Us > u_thresh
     OR consecutive Ns > n_thresh. Otherwise, True if all filters are passed. All thresholds have
@@ -33,6 +34,10 @@ def apply_filters(seq_pre, seq_linker, seq_post, ac_thresh, u_thresh, n_thresh):
     seq_neighborhood = seq_neighborhood.replace("T", "U")
     if any(nt * (n_thresh + 1) in seq_neighborhood for nt in set(seq_linker)):
         return False
+    # Sequences to avoid
+    if sequences_to_avoid is not None:
+        if any(seq_to_avoid in seq_pre[-len(seq_to_avoid):] + seq_linker + seq_post[:len(seq_to_avoid)] for seq_to_avoid in sequences_to_avoid):
+            return False
     return True
 
 def calc_subscores(linker_pos, *sequence_components):
@@ -93,7 +98,7 @@ def apply_score(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_linker,
 
 def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
              linker_pattern, ac_thresh, u_thresh, n_thresh, topn, epsilon,
-             num_repeats, num_steps, temp_init, temp_decay, seed):
+             num_repeats, num_steps, temp_init, temp_decay, seed, sequences_to_avoid=None):
     """
     Simulated annealing optimization of linkers
     """
@@ -103,6 +108,8 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
     seq_post = seq_motif
     linker_pattern = linker_pattern.upper()
     ac_thresh = ac_thresh * len(linker_pattern)
+    if sequences_to_avoid is not None:
+        sequences_to_avoid = set(motif.upper() for motif in sequences_to_avoid)
     ## Simulated annealing to optimize linker sequence
     # Initialize hashmap of sequences already considered
     linker_skip = {}
@@ -128,7 +135,7 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
                 keep_going = (
                     seq_linker in linker_skip
                     or not apply_filters(seq_pre, seq_linker, seq_post,
-                                         ac_thresh, u_thresh, n_thresh))
+                                         ac_thresh, u_thresh, n_thresh, sequences_to_avoid))
                 if len(linker_skip) >= len_sequence_space: # already screened whole seq space
                     seen_everything = True
                     break
@@ -194,7 +201,7 @@ def apply_bottleneck(heap_scores, heap, bottleneck, seed):
 def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
            linker_pattern="NNNNNNNN", ac_thresh=0.5, u_thresh=3, n_thresh=3, topn=100,
            epsilon=1e-2, num_repeats=10, num_steps=250, temp_init=0.15, temp_decay=0.95,
-           bottleneck=1, seed=2020):
+           bottleneck=1, seed=2020, sequences_to_avoid=None):
     """
     Optimizes+bottlenecks linker for an inputted pegRNA. Outputs linker recommendation(s).
     """
@@ -203,7 +210,7 @@ def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
         seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
         linker_pattern=linker_pattern, ac_thresh=ac_thresh, u_thresh=u_thresh,
         n_thresh=n_thresh, topn=topn, epsilon=epsilon, num_repeats=num_repeats,
-        num_steps=num_steps, temp_init=temp_init, temp_decay=temp_decay, seed=seed)
+        num_steps=num_steps, temp_init=temp_init, temp_decay=temp_decay, seed=seed, sequences_to_avoid=sequences_to_avoid)
     # Sample diverse sequences
     linker_output = apply_bottleneck(linker_heap_scores, linker_heap,
                                      bottleneck=bottleneck, seed=seed)

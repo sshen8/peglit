@@ -18,7 +18,7 @@ from peglit import constants
 def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
            linker_pattern="NNNNNNNN", ac_thresh=0.5, u_thresh=3, n_thresh=3, topn=100,
            epsilon=1e-2, num_repeats=10, num_steps=250, temp_init=0.15, temp_decay=0.95,
-           bottleneck=1, seed=2020, verbose=False, progress=None):
+           bottleneck=1, seed=2020, verbose=False, progress=None, sequences_to_avoid=None):
     """
     Optimizes+bottlenecks linker for an inputted pegRNA. Outputs linker recommendation(s).
     """
@@ -28,7 +28,7 @@ def pegLIT(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
         linker_pattern=linker_pattern, ac_thresh=ac_thresh, u_thresh=u_thresh,
         n_thresh=n_thresh, topn=topn, epsilon=epsilon, num_repeats=num_repeats,
         num_steps=num_steps, temp_init=temp_init, temp_decay=temp_decay, seed=seed,
-        progress=progress)
+        progress=progress, sequences_to_avoid=sequences_to_avoid)
     # Sample diverse sequences
     linker_output, linker_feats = apply_bottleneck(linker_heap_scores, linker_heap,
                                                    bottleneck=bottleneck, seed=seed, verbose=True)
@@ -48,7 +48,7 @@ def make_output(args, seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif
         linker_pattern=args.linker_pattern, ac_thresh=args.ac_thresh, u_thresh=args.u_thresh,
         n_thresh=args.n_thresh, topn=args.topn, epsilon=args.epsilon, num_repeats=args.num_repeats,
         num_steps=args.num_steps, temp_init=args.temp_init, temp_decay=args.temp_decay,
-        bottleneck=args.bottleneck, seed=args.seed, verbose=True, progress=progress)
+        bottleneck=args.bottleneck, seed=args.seed, verbose=True, progress=progress, sequences_to_avoid=args.sequences_to_avoid)
     filter_stats["Bottleneck"] = args.topn - args.bottleneck
     filter_stats["Simulated annealing"] = (sequence_space(args.linker_pattern)
                                            - sum(filter_stats.values())
@@ -94,6 +94,8 @@ def main(raw_args=None):
                            help="Maximum number of consecutive any nucleotide allowed."
                                 "Default: {}."
                            .format(constants.DEFAULT_N_THRESH))
+    group_par.add_argument("--motifs-to-avoid", type=str, nargs='*',
+                           help="List of motifs to avoid in linker design.")
     group_par.add_argument("--topn", type=int, default=constants.DEFAULT_TOPN,
                            help="Keep this many of the best linkers. Small value -> better "
                                 "linker sequences. Large value -> potentially more diverse. "

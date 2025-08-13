@@ -33,6 +33,9 @@ import pytest
     ({"seq_pre": "G", "seq_linker": "TAAATAAA", "seq_post": "G", "ac_thresh": 4, "u_thresh": 3, "n_thresh": 3}, (True, None)),
     ({"seq_pre": "A", "seq_linker": "AAATTAAA", "seq_post": "G", "ac_thresh": 4, "u_thresh": 3, "n_thresh": 3}, (False, "N thresh")),
     ({"seq_pre": "G", "seq_linker": "AAATTAAA", "seq_post": "A", "ac_thresh": 4, "u_thresh": 3, "n_thresh": 3}, (False, "N thresh")),
+    # Motifs to avoid
+    ({"seq_pre": "", "seq_linker": "AATAGAGA", "seq_post": "CGCG", "ac_thresh": 4, "u_thresh": 3, "n_thresh": 3, "sequences_to_avoid": ["CGTCTC", "GAGACG"]}, (False, "Sequence to avoid")),
+    ({"seq_pre": "", "seq_linker": "AATAGTGA", "seq_post": "CGCG", "ac_thresh": 4, "u_thresh": 3, "n_thresh": 3, "sequences_to_avoid": ["CGTCTC", "GAGACG"]}, (True, None)),
 ])
 def test_filters(case_in, case_out):
     assert filt_main(**case_in, verbose=True) == case_out
@@ -128,6 +131,19 @@ def test_optimize(case_in, case_out):
         "num_steps": 5,
         "seed": 2020,
     }, {"ACCGTAAACATTAAGGTT",}),
+    ({ # DNMT1 +1 flag insertion, test sequences_to_avoid
+        "seq_spacer": "GATTCCTGGTGCCAGAAACA",
+        "seq_scaffold": "GTTTTAGAGCTAGAAATAGCAAGTTAAAATAAGGCTAGTCCGTTATCAACTTGAAAAAGTGGCACCGAGTCGGTGC",
+        "seq_template": "TCTGCCCTCCCGTCACCCCTGT",
+        "seq_pbs": "TTCTGGCACCAGGA",
+        "seq_motif": "GGGTCAGGAGCCCCCCCCCTGAACCCAGGATAACCCTCAAAGTCGGGGGGCAACCC",
+        "linker_pattern": "NNNNNNNNNNNNNNNNNN",
+        "topn": 10,
+        "num_repeats": 3,
+        "num_steps": 5,
+        "seed": 2020,
+        "sequences_to_avoid": {"GGTTGG"},
+    }, {"AGCCGTCACCGACTTGAT",}),
 ))
 def test_pegLIT(case_in, case_out):
     assert len(set(pegLIT_main(**case_in, verbose=False)) & case_out) == len(case_out)

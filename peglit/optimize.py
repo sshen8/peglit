@@ -11,7 +11,7 @@ from peglit.utils import sequence_space
 def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
              linker_pattern=None, ac_thresh=None, u_thresh=None, n_thresh=None, topn=None,
              epsilon=None, num_repeats=None, num_steps=None, temp_init=None, temp_decay=None,
-             seed=None, progress=None):
+             seed=None, progress=None, sequences_to_avoid=None):
     """
     Simulated annealing optimization of linkers
     """
@@ -41,10 +41,12 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
         temp_init = constants.DEFAULT_TEMP_INIT
     if temp_decay is None:
         temp_decay = constants.DEFAULT_TEMP_DECAY
+    if sequences_to_avoid is not None:
+        sequences_to_avoid = set(motif.upper() for motif in sequences_to_avoid)
     ## Simulated annealing to optimize linker sequence
     # Initialize num linkers rejected for reasons
     SCORE_REASONS = ("PBS", "Spacer", "Template", "Scaffold")
-    filter_stats = {"AC thresh": 0, "U thresh": 0, "N thresh": 0,
+    filter_stats = {"AC thresh": 0, "U thresh": 0, "N thresh": 0, "Sequence to avoid": 0,
                     **{rsn: 0 for rsn in SCORE_REASONS}}
     # Initialize hashmap of sequences already considered
     linker_skip = {}
@@ -75,7 +77,7 @@ def optimize(seq_spacer, seq_scaffold, seq_template, seq_pbs, seq_motif,
                     continue
                 linker_skip[seq_linker] = True
                 filt_pass, rsn = apply_filters(seq_pre, seq_linker, seq_post,
-                                               ac_thresh, u_thresh, n_thresh, verbose=True)
+                                               ac_thresh, u_thresh, n_thresh, verbose=True, sequences_to_avoid=sequences_to_avoid)
                 if filt_pass:
                     break
                 else:
